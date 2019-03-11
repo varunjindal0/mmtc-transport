@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  loadingStation: MyString
+  weight: 1
+  loadingDate: 2019-03-05
+  material: MyString
+  freight: 1
+  truckType: MyString
+
+two:
+  loadingStation: MyString
+  weight: 1
+  loadingDate: 2019-03-05
+  material: MyString
+  freight: 1
+  truckType: MyString

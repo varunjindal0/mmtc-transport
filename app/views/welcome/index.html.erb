@@ -1,0 +1,9 @@
+<!-- <h1>Requirements#index</h1>
+<p>Find me in app/views/requirements/index.html.erb</p> -->
+
+<!-- Do you guys do it in this way? -->
+<%= content_tag :div,
+  id: "appointments_data",
+  isLoggedIn: user_signed_in? do %>
+<% end %>
+<%= javascript_pack_tag 'hello_react'%>
