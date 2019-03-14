@@ -8,6 +8,11 @@ import PropTypes from 'prop-types'
 // import App from './render_requirements'
 import App from './trial'
 
+// Action Cable setup
+import actionCable from 'actioncable'
+const CableApp = {}
+CableApp.cable = actionCable.createConsumer('ws://${window.location.hostname}:3000/cable')
+
 
 const Hello = props => (
   <div>Hello {props.name}!</div>
@@ -30,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const isLoggedIn = JSON.parse(node.getAttribute('isLoggedIn'))
   ReactDOM.render(
     <div>
-      <App isLoggedIn={isLoggedIn}/>
+      <App isLoggedIn={isLoggedIn} cableApp={CableApp}/>
     </div>,
     document.body.appendChild(document.createElement('div')),
   )

@@ -14,7 +14,7 @@ class RequirementsController < ApplicationController
   def create
   	@requirement = Requirement.new(whitelisted_requirements_params)
   	if @requirement.save!
-      ActionCable.server.broadcast "requirements_channel", requirement_to_render: requirement_to_render
+      ActionCable.server.broadcast "requirements_channel", requirement_to_render: @requirement
   		render json: {success: true}
   	else
   		redirect_to "new"
@@ -23,7 +23,9 @@ class RequirementsController < ApplicationController
 
   def destroy
   	@requirement = Requirement.find(params[:id])
-  	@requirement.destroy
+  	if @requirement.destroy
+      ActionCable.server.broadcast "requirements_channel", requirement_to_render: {delete: true, requirement_id: @requirement.id}
+    end
   end
 
   private
@@ -31,7 +33,7 @@ class RequirementsController < ApplicationController
   	params.require(:requirement).permit(:loadingStation, :destination, :weight, :freight, :loadingDate, :material, :truckType)  
   end
 
-  def requirement_to_render
-    render(partial: 'requirement', locals: {requirement: @requirement})
-  end
+  # def requirement_to_render
+  #   render json: @requirement
+  # end
 end

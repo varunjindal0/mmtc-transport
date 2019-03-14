@@ -3,44 +3,9 @@ import '../stylesheets/App.css';
 import { FaTrash , FaArrowRight, FaPlus } from 'react-icons/fa';
 import ShowRequirement from './show_requirement'
 
-// class ShowRequirement extends Component {
-// 	constructor(props){
-// 		super(props);
-// 		this.state = {showFull: false};
-// 	}
+ActionCable = require('actioncable');
+ 
 
-// 	onRequiremntClick = ()=>{
-// 		console.log("Requirement was clicked!!")
-// 		this.setState({showFull: !this.state.showFull});
-// 	}
-
-// 	render(){
-// 		if(this.state.showFull){
-// 			return <div className='FullEntry' onClick={this.onRequiremntClick}>
-// 					<div className='buffer'>
-// 					  <div>{this.props.data.loadingStation }</div>
-// 					  <div> to </div>
-// 				      <div>{this.props.data.destination}</div>
-// 				    </div>
-// 				    <div className='buffer'>  
-// 				      <div>{this.props.data.weight + ' ton'}</div>
-// 				      <div>{this.props.data.loadingDate}</div>
-// 				    </div>
-// 				    <div className='buffer'>  
-// 				      <div>{this.props.data.material}</div>
-// 				      <div>{this.props.data.freight + ' rs'}</div>
-// 				      <div>{this.props.data.truckType}</div>
-// 				    </div>  
-// 				   </div> ;
-// 		}else {
-// 			return <div className='Entry' onClick={this.onRequiremntClick}>
-// 					  <div>{this.props.data.loadingStation }</div> 
-// 					  <div> <FaArrowRight /> </div>
-// 				      <div>{this.props.data.destination}</div>
-// 				   </div> ;
-// 		}
-// 	}
-// }
 
 class App extends Component {
 	constructor(props){
@@ -49,10 +14,46 @@ class App extends Component {
 		console.log("=>>>>>>>>>>>>>>>>>>>>>>>>>>>> :::: " + this.props.isLoggedIn)
 	}
 
+	componentDidMount() {
+	    this.fetchDataandSetState();
+
+	    var cable = ActionCable.createConsumer('/cable');
+ 
+		cable.subscriptions.create({channel: 'RequirementsChannel'}, {
+		  // normal channel code goes here...
+		  connected: ()=>{
+		  	// Called when the subscription is ready for use on the server
+		  },
+		
+		  disconnected: ()=>{
+		  	// Called when the subscription has been terminated by the server
+		  },
+		    
+		  received: (data) =>{
+		  	// Called when there's incoming data on the websocket for this channel
+		  	if(data.requirement_to_render.delete){
+		  		var arr = [];
+		  		this.state.data.map(elem=>{
+		  			if(elem.id !== data.requirement_to_render.requirement_id){
+		  				arr.push(elem);
+		  			}
+		  		})
+		  		this.setState({data: arr});
+		  	}else {
+		  		this.setState(prevState => ({
+				  data: [...prevState.data, data.requirement_to_render]
+				}))
+		  	}
+		    
+		  }
+		 });
+		    
+	}
+
 	fetchDataandSetState = ()=>{
 		fetch('/requirements')
 		.then(response=>{
-			console.log(response["redirected"])
+			console.log(response)
 			return response.json();
 		})
 		.then(entries=>{
@@ -63,9 +64,9 @@ class App extends Component {
 		})
 	}
 
-	componentDidMount(){
-		this.fetchDataandSetState();
-	}
+	// componentDidMount(){
+	// 	this.fetchDataandSetState();
+	// }
 
   handleAdminButtonPress = ()=>{
   	window.location.assign("/users/sign_in")
@@ -105,8 +106,8 @@ class App extends Component {
 	  		alert(err);
 	  	})
 	  	
-	  	var id = "idForRequiremnt:" + index;
-	    document.getElementById(id).remove();
+	  	// var id = "idForRequiremnt:" + index;
+	   //  document.getElementById(id).remove();
   	}else{
   		return ;
   	}
@@ -138,7 +139,7 @@ class App extends Component {
    		}else {
    			return (
 	  			<div className='App'>
-	  				<h1>RT GoodsCarrier</h1>
+	  				<h1>MMTC Transport Carrier</h1>
 	  				<button style={{marginBottom: '20px'}} onClick = {this.handleAdminButtonPress}>Switch to Admin View!</button>
 	  				{
 	  					this.state.data.map((requirement, index)=>{
