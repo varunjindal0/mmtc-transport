@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import '../stylesheets/App.css';
 import { FaTrash , FaArrowRight, FaPlus } from 'react-icons/fa';
+import ShowQuotations from './show_quotations'
 
 class ShowRequirement extends Component {
 	constructor(props){
@@ -13,9 +14,13 @@ class ShowRequirement extends Component {
 		this.setState({showFull: !this.state.showFull});
 	}
 
+	
+
 	render(){
 		if(this.state.showFull){
 			return <div className='FullEntry' onClick={this.onRequiremntClick}>
+					
+					
 					<div className='buffer'>
 					  <div>{this.props.data.loadingStation }</div>
 					  <div> to </div>

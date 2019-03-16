@@ -31,11 +31,12 @@ function cableUpdate(para){
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  const node = document.getElementById('appointments_data')
-  const isLoggedIn = JSON.parse(node.getAttribute('isLoggedIn'))
+  const node = document.getElementById('appointments_data');
+  const isLoggedIn = JSON.parse(node.getAttribute('isLoggedIn'));
+  const user_id = JSON.parse(node.getAttribute('current_user'));
   ReactDOM.render(
     <div>
-      <App isLoggedIn={isLoggedIn} cableApp={CableApp}/>
+      <App isLoggedIn={isLoggedIn} current_user_id={user_id} cableApp={CableApp}/>
     </div>,
     document.body.appendChild(document.createElement('div')),
   )

@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import '../stylesheets/App.css';
+import '../stylesheets/Login.css';
 import { FaTrash , FaArrowRight, FaPlus } from 'react-icons/fa';
 import ShowRequirement from './show_requirement'
+import ShowQuotations from './show_quotations'
 
 ActionCable = require('actioncable');
  
@@ -113,10 +115,43 @@ class App extends Component {
   	}
   	
   }
+  handleChange = (e)=>{
+        this.setState(
+            {
+                 [e.target.name]: e.target.value
+            }
+        )
+    }
+
+	onQuotationSubmit = (data)=>{
+		console.log("Quotation submit accepted!! " + this.state['requirement_id:' + data.id]);
+		fetch('http://localhost:3000/requirements/' + data.id + '/quotations', {
+	           method: 'post',
+	           headers: {
+	             'Content-Type': 'application/json'
+	            },
+	           body: JSON.stringify({
+	            value: this.state['requirement_id:' + data.id],
+	            requirement_id: data.id,
+	            user_id: this.props.current_user_id
+	            })
+	         })
+	        .then(res=>{
+	            console.log(res);
+	        })
+	        .catch(err=>{
+	            console.log("What the hell! " + err);
+	        })
+	}
 
   render() {
   	if(this.state.data.length === 0 ){
-  		return <div className='App'>Loading data...</div>
+  		return <div className='App'>
+  					<h1>MMTC Transport Carrier</h1>
+	  				<button style={{marginBottom: '20px'}} onClick = {this.handleLogoutButtonPress}>Logout!</button>
+	  				<div style={{marginBottom: '20px'}} onClick={this.addNewRequirement}><FaPlus /></div>
+		  			Loading data...
+		  	   </div>
    	}else {
    		if(this.state.isLoggedIn){
    			return (
@@ -128,8 +163,22 @@ class App extends Component {
 	  					this.state.data.map((requirement, index)=>{
 	  						return (
 	  						<div key={index} id={"idForRequiremnt:" + index} className='AdminViewEntry'>
+		  						<input
+			                        className="form-item"
+			                        placeholder="Quote here..."
+			                        name={'requirement_id:' + requirement.id}
+			                        type="text"
+			                        onChange={this.handleChange}
+			                    />
+			                    <input
+			                        className="form-submit"
+			                        value="SUBMIT"
+			                        type="submit"
+			                        onClick = {()=>this.onQuotationSubmit(requirement)}
+			                    />
 	  							<ShowRequirement data={requirement} />
 	  							<div style={{marginLeft: '5px'}}  onClick={()=>this.onDeletePress(requirement, index)}><FaTrash /></div>
+	  							<ShowQuotations requirement_id = {requirement.id} />
 	  						</div>
 	  						)
 	  					})

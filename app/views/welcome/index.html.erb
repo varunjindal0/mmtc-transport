@@ -4,6 +4,8 @@
 <!-- Do you guys do it in this way? -->
 <%= content_tag :div,
   id: "appointments_data",
-  isLoggedIn: user_signed_in? do %>
+  isLoggedIn: user_signed_in?,
+  current_user: current_user ? current_user.id : nil do %>
 <% end %>
+
 <%= javascript_pack_tag 'hello_react'%>

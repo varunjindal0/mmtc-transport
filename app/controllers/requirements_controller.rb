@@ -13,6 +13,7 @@ class RequirementsController < ApplicationController
 
   def create
   	@requirement = Requirement.new(whitelisted_requirements_params)
+    @requirement[:user_id] = current_user.id
   	if @requirement.save!
       ActionCable.server.broadcast "requirements_channel", requirement_to_render: @requirement
   		render json: {success: true}
@@ -30,7 +31,7 @@ class RequirementsController < ApplicationController
 
   private
   def whitelisted_requirements_params
-  	params.require(:requirement).permit(:loadingStation, :destination, :weight, :freight, :loadingDate, :material, :truckType)  
+  	params.require(:requirement).permit(:loadingStation, :destination, :weight, :freight, :loadingDate, :material, :truckType, :user_id)  
   end
 
   # def requirement_to_render
